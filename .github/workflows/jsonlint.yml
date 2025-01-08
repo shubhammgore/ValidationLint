@@ -1,0 +1,30 @@
+name: JSON Validation # Name of the workflow
+
+on: # Trigger the workflow on pull requests and pushes to the main branch
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate-json: # Define a job named "validate-json"
+    runs-on: ubuntu-latest # The environment the job will run on
+
+    steps: # Steps to execute
+      - name: Checkout code
+        uses: actions/checkout@v3 # Fetch the repository code
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18" # Install Node.js (v18 or any version you prefer)
+
+      - name: Install JSONLint
+        run: npm install -g jsonlint # Install JSONLint globally
+
+      - name: Validate JSON Files
+        run: |
+          for file in $(find . -name '*.json'); do
+            echo "Validating $file"
+            jsonlint "$file" -q  # Validate each JSON file quietly (-q)
+          done
